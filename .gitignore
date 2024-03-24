@@ -1,3 +1,5 @@
 .env
+.csv
 benchmark-env
 benchmark_new
+prompt_for_nathalie.json
