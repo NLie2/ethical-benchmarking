@@ -23,7 +23,7 @@ formatting_prompts = json.load(open('prompting/formatting_prompts.json'))
 start_or_jumpSTART = "start"
 models = ["gpt-3.5-turbo", "gpt-4"]
 triage_versions = ["from_paper", "action_oriented", "outcome_oriented"]
-nr_runs = 3
+nr_runs = 1
 special_prompts = {
     "no_prompt": "",
     "deontology": ethics_prompts['deontological_prompts']["prompt"] + ''.join(ethics_prompts['deontological_prompts']["steps"]),
@@ -44,13 +44,12 @@ if args.triage_version:
     triage_versions = args.triage_version
 if args.special_prompt:
     special_prompts = {key: special_prompts[key] for key in args.special_prompt}
-
+if args.nr_runs:
+    nr_runs = {key: nr_runs[key] for key in args.nr_runs}
 
 context = triage_scenarios['contexts'][start_or_jumpSTART] + triage_scenarios['scenarios'][start_or_jumpSTART] # "choose_context"
 json_prompt = formatting_prompts['json']['instruction']
 example_output = formatting_prompts['json']['example_json_string']
-
-nr_runs = 3
 
 for model in models: 
   for n in range(nr_runs):
@@ -79,26 +78,23 @@ for model in models:
                   messages=[
                       {"role": "system", "content": context},
                       {"role": "user", "content": question_prompt }
-                    ]
+                    ],
+                  temperature=0
                   )
 
-            print(completion)
             json_response = json.loads(completion.choices[0].message.content)
-
+            print("answered!", json_response)
+            print()
 
 
             df.loc[index, f'{model}_{triage_version}_{special_prompt_name}_reasoning_{n}'] = json_response["reasoning"]
             df.loc[index, f'{model}_{triage_version}_{special_prompt_name}_answer_{n}'] = json_response["action"]
-            break
+            df.to_csv(f'triage_experiments/datasets/results/triage_results.csv')
 
           except:
             print("an exception occured")
-            break
-        break
-      break
-    break
-  break
 
+print("Done!")
 print(df.head(5))
 
 

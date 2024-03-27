@@ -14,6 +14,7 @@ completion = client.chat.completions.create(
     {"role": "system", "content": "You are a poetic assistant, skilled in explaining complex programming concepts with creative flair."},
     {"role": "user", "content": "Compose a poem that explains the concept of recursion in programming."}
   ]
+  temperature=0
 )
 
 print(completion.choices[0].message)
