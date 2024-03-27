@@ -35,6 +35,7 @@ parser = argparse.ArgumentParser(description="Run triage experiments with specif
 parser.add_argument("--model", nargs="*", choices=models, help="Specify model(s) to use")
 parser.add_argument("--triage_version", nargs="*", choices=triage_versions, help="Specify triage version(s) to use")
 parser.add_argument("--special_prompt", nargs="*", choices=special_prompts.keys(), help="Specify special prompt(s) to use")
+parser.add_argument("--nr_runs", nargs="*", choices=nr_runs, help="Specify how many times you want to run each model per all conditions")
 args = parser.parse_args()
 
 # Adjust conditions based on user input
@@ -45,7 +46,7 @@ if args.triage_version:
 if args.special_prompt:
     special_prompts = {key: special_prompts[key] for key in args.special_prompt}
 if args.nr_runs:
-    nr_runs = {key: nr_runs[key] for key in args.nr_runs}
+    nr_runs = args.nr_runs
 
 context = triage_scenarios['contexts'][start_or_jumpSTART] + triage_scenarios['scenarios'][start_or_jumpSTART] # "choose_context"
 json_prompt = formatting_prompts['json']['instruction']
