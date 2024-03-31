@@ -3,9 +3,11 @@ import pandas as pd
 import sys
 
 import analysis
-from triage_zone_mapping import class_to_color
+from visualize_triage import visualize, misclassification
+from triage_zone_mapping import class_to_color, color_to_class
 
-triage_path = "triage_experiments/datasets/full_set_with_answers_gpt3.5_gpt4.csv"
+
+triage_path = "/Users/nathaliekirch/THESIS/ethical-benchmarking/triage_experiments/datasets/results/2024-03-27_15_28_triage_results.csv"
 
 pathname = triage_path
 
@@ -30,9 +32,9 @@ df = df.drop(columns=['question', 'action', 'class'])
 melted_df = df.melt(id_vars=['question_id', 'triage_zone'], var_name='column', value_name='response')
 
 # Extract information from 'column' into new columns
-melted_df['model'] = melted_df['column'].str.extract('(gpt35|gpt4)')
+melted_df['model'] = melted_df['column'].str.extract('(gpt-3.5|gpt-4)')
 melted_df['syntax'] = melted_df['column'].str.extract('(paper|outcome|action)')
-melted_df['prompt_type'] = melted_df['column'].str.contains('machEthics').map({True: 'machEthics', False: 'CoT'})
+melted_df['prompt_type'] = melted_df['column'].str.extract('(no_prompt|deontology|utilitarianism)')
 melted_df['response_type'] = melted_df['column'].str.contains('reasoning').map({True: 'reasoning', False: 'answer'})
 
 # Filter out rows without responses  
@@ -41,10 +43,40 @@ melted_df.dropna(subset=['response'])
 # Check if the model answer matches the expected model answer
 melted_df['correct_answer'] = melted_df.apply(check_match, axis=1)
 
+# filter melted_df for rows that contain "answer" in response_tye
+merged = melted_df[melted_df['response_type'] == 'answer']
+
 # Drop columns that are no longer needed
 melted_df = melted_df.drop(columns=['column', 'triage_zone', 'response', 'response_type'])
 
 melted_df.to_csv('triage_experiments/datasets/melted_df_for_mixed_model.csv')
 
 # print summary
-analysis.analyse_triage()
+summary = analysis.analyse_triage()
+
+
+
+visualize(summary)
+
+
+
+# create separate dataframes for each model
+gpt_35 = merged[merged['model'] == 'gpt-3.5']
+gpt_4 = merged[merged['model'] == 'gpt-4']
+#create separate dataframe for each syntax
+paper = merged[merged['syntax'] == 'paper']
+outcome = merged[merged['syntax'] == 'outcome']
+action = merged[merged['syntax'] == 'action']
+# create separate dataframe for each prompt type
+no_prompt = merged[melted_df['prompt_type'] == 'no_prompt']
+deontology = melted_df[merged['prompt_type'] == 'deontology']
+utilitarianism = merged[merged['prompt_type'] == 'utilitarianism']
+
+# print first 5 rows of gpt_35 dataframe
+print(gpt_4.head(5))
+# print(gpt_35.head(5)["qustion_id"], gpt_4.head(5)["question_id"], paper.head(5)["question_id"], action.head(5)["question_id"], outcome.head(5)["question_id"], no_prompt.head(5)["question_id"], deontology.head(5)["question_id"], utilitarianism.head(5)["question_id"])
+
+# merge all dataframes
+merged = pd.merge(gpt_35, gpt_4, paper, action, outcome, no_prompt,deontology, utilitarianism, on='question_id')
+misclassification(merged, merged.columns)
+

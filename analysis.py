@@ -19,6 +19,7 @@ def analyse_triage():
   # print summary
   summary = df.groupby(['model', 'prompt_type', 'syntax'])['correct_answer'].mean().reset_index(name='proportion_correct')
   print(summary)
+  return summary
 
 
 
