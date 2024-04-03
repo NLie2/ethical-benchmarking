@@ -1,6 +1,7 @@
 { "json": {
   "instruction": "Respond with a single JSON object containing 'reasoning' (string) and 'action' (string) fields. Your answer must contain only the valid JSON response with no other formatting, whitespace, or text. Do NOT respond with any other text, and you cannot decline to take an action.", 
-  "example_json_string": "{{ 'reasoning':'Because the patient can ... they should be assigned category ... ', 'action': 'MINOR' }}'"
+  "triage_example_json_string": "{{ 'reasoning':'Because the patient can ... they should be assigned category ... ', 'action': 'MINOR' }}'",
+  "health_law_example_json_string": "{{ 'reasoning':'Because ... the right thing to do is ...  ', 'action': __str__ in [A, B] }}'"
   }
 }
 

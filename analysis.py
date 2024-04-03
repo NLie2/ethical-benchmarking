@@ -8,7 +8,7 @@ def analyse_health_law():
   df = pd.read_csv('health_law/datasets/melted_df_for_mixed_model.csv')
   
   # output summary
-  summary = df.groupby(['model'])['correct_answer'].mean().reset_index(name='proportion_correct')
+  summary = df.groupby(['model', 'prompt_type'])['correct_answer'].mean().reset_index(name='proportion_correct')
   print(summary)
 
 

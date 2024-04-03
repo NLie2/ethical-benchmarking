@@ -15,7 +15,8 @@ df = df.rename(columns={'Unnamed: 0': 'question_id', '0': 'source_text'})
 melted_df = df.melt(id_vars=['question_id', 'questions_gpt-4', 'gold_answers_gpt-4', 'gold_reasoning_gpt-4', 'source_text', 'answer_options'], var_name='column', value_name='response')
 melted_df['model'] = melted_df['column'].str.extract('(gpt-3.5|gpt-4)')
 melted_df['response_type'] = melted_df['column'].str.contains('reasoning').map({True: 'reasoning', False: 'answer'})
-melted_df['prompt_type'] = "no_prompt" 
+melted_df['prompt_type'] = melted_df['column'].str.contains('ethical').map({True: 'ethical', False: 'no_prompt'})
+# melted_df['prompt_type'] = "no_prompt" 
 
 # Filter rows with unwanted data
 melted_df = melted_df.drop(columns=['column'])
