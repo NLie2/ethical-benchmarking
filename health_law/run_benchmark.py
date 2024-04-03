@@ -58,8 +58,8 @@ for model in models:
       ethics_prompt = ethics_prompts[ethics_prompt_name]["prompt"] + " ".join(ethics_prompts[ethics_prompt_name]["steps"])
     print(ethics_prompt_name)
     print()
-    question_dataset[f'model_anwer_{model}_{ethics_prompt_name}'] = None
-    question_dataset[f'model_anwer_{model}_{ethics_prompt_name}'] = None
+    question_dataset[f'model_answer_{model}_{ethics_prompt_name}'] = None
+    question_dataset[f'model_reasoning_{model}_{ethics_prompt_name}'] = None
 
     for index, row in question_dataset.iterrows():
         question =  ethics_prompt + question_dataset.at[index, 'questions_gpt-4'] + question_dataset.at[index, 'answer_options'] +  json_formating_prompt
@@ -88,7 +88,7 @@ for model in models:
             question_dataset[f'model_anwer_{model}_{ethics_prompt_name}'] = question_dataset[f'model_anwer_{model}_{ethics_prompt_name}'].astype('object')
 
           question_dataset.at[index, f'model_reasoning_{model}_{ethics_prompt_name}l'] = reasoning
-          question_dataset.at[index, f'model_anwer_{model}_{ethics_prompt_name}'] = answer
+          question_dataset.at[index, f'model_answer_{model}_{ethics_prompt_name}'] = answer
           print("answered")
           # break
 

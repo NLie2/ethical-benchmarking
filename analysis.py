@@ -3,9 +3,9 @@ import pandas as pd
 import sys
 
 # Analyse correctness of health_law dataset
-def analyse_health_law():
+def analyse_health_law(path):
   # save to CSV
-  df = pd.read_csv('health_law/datasets/melted_df_for_mixed_model.csv')
+  df = pd.read_csv(path)
   
   # output summary
   summary = df.groupby(['model', 'prompt_type'])['correct_answer'].mean().reset_index(name='proportion_correct')
