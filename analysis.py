@@ -10,6 +10,7 @@ def analyse_health_law(path):
   # output summary
   summary = df.groupby(['model', 'prompt_type'])['correct_answer'].mean().reset_index(name='proportion_correct')
   print(summary)
+  return summary
 
 
 # Analyse correctness of triage dataset
@@ -17,7 +18,9 @@ def analyse_triage():
   df = pd.read_csv('triage_experiments/datasets/melted_df_for_mixed_model.csv')
 
   # print summary
-  summary = df.groupby(['model', 'prompt_type', 'syntax'])['correct_answer'].mean().reset_index(name='proportion_correct')
+  # summary = df.groupby(['model', 'prompt_type', 'syntax'])['correct_answer'].mean().reset_index(name='proportion_correct')
+  summary = df.groupby(['model', 'prompt_type'])['correct_answer'].mean().reset_index(name='proportion_correct')
+
   print(summary)
   return summary
 

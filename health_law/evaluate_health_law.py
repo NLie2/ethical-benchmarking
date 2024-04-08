@@ -3,8 +3,10 @@
 import pandas as pd 
 import analysis
 
+import visualize_health_law
 
-# pathname = "health_law/datasets/full_answer_3.5_4.csv"
+
+# pathname = "health_law/datasets/results/full_answer_3.5_4.csv"
 pathname = "health_law/datasets/results/health_law_answers_2024-04-03_16_23.csv"
 df = pd.read_csv(pathname)
 df.dropna()
@@ -18,7 +20,7 @@ melted_df = df.melt(id_vars=['question_id', 'questions_gpt-4', 'gold_answers_gpt
 melted_df['model'] = melted_df['column'].str.extract('(gpt-3.5|gpt-4)')
 melted_df['response_type'] = melted_df['column'].str.contains('reasoning').map({True: 'reasoning', False: 'answer'})
 # melted_df['prompt_type'] = melted_df['column'].str.contains('ethical').map({True: 'ethical', False: 'no_prompt'})
-melted_df['prompt_type'] = melted_df['column'].str.extract('(no_prompt|utilitarian|hippocratic)')
+# melted_df['prompt_type'] = melted_df['column'].str.extract('(no_prompt|utilitarian|hippocratic)')
 
 # Filter rows with unwanted data
 melted_df = melted_df.drop(columns=['column'])
@@ -33,4 +35,6 @@ melted_df.dropna(subset=['model'])
 melted_df.to_csv('health_law/datasets/melted_df_for_mixed_model.csv')
 
 # output summary
-analysis.analyse_health_law('health_law/datasets/melted_df_for_mixed_model.csv')
+summary = analysis.analyse_health_law('health_law/datasets/melted_df_for_mixed_model.csv')
+
+visualize_health_law.visualize(summary)
