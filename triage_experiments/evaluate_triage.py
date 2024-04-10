@@ -53,6 +53,7 @@ melted_df.to_csv('triage_experiments/datasets/melted_df_for_mixed_model.csv')
 
 # print summary
 summary = analysis.analyse_triage()
+question_variation = analysis.check_question_variation("triage_experiments/datasets/melted_df_for_mixed_model.csv")
 
 
 

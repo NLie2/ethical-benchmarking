@@ -7,8 +7,9 @@ import os
 import argparse
 
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+ORGANIZATION_ID = os.getenv("OPENAI_ORGANIZATION_ID")
 
-client = OpenAI(api_key = OPENAI_API_KEY)
+client = OpenAI(api_key = OPENAI_API_KEY, organization = ORGANIZATION_ID)
 
 path_to_question_dataset = "health_law/datasets/questions/health_law_questions_gpt4.csv"
 path_to_ethics_prompts = 'prompting/ethics_prompts.json'
@@ -73,7 +74,7 @@ for model in models:
                     {"role": "system", "content": context },
                     {"role": "user", "content": question }
                   ],
-          "temperature": 0
+          "temperature": 0.5,
         }
         if model == "gpt-3.5-turbo": args["response_format"] = response_format= { "type": "json_object" }
 
@@ -84,11 +85,18 @@ for model in models:
           print(model_answer)
           reasoning = model_answer["reasoning"]
           answer = model_answer["action"]
-          if question_dataset[f'model_anwer_{model}_{ethics_prompt_name}'].dtype != 'object':
-            question_dataset[f'model_anwer_{model}_{ethics_prompt_name}'] = question_dataset[f'model_anwer_{model}_{ethics_prompt_name}'].astype('object')
+          print()
+          print(reasoning)
+          print(answer)
 
-          question_dataset.at[index, f'model_reasoning_{model}_{ethics_prompt_name}l'] = reasoning
+          # if question_dataset[f'model_anwer_{model}_{ethics_prompt_name}'].dtype != 'string':
+          #   question_dataset[f'model_anwer_{model}_{ethics_prompt_name}'] = question_dataset[f'model_anwer_{model}_{ethics_prompt_name}'].astype('string')
+
+          question_dataset.at[index, f'model_reasoning_{model}_{ethics_prompt_name}'] = reasoning
           question_dataset.at[index, f'model_answer_{model}_{ethics_prompt_name}'] = answer
+          
+          # question_dataset.to_csv('health_law/datasets/results/health_results_temp.csv')
+
           print("answered")
           # break
 

@@ -8,7 +8,11 @@ def analyse_health_law(path):
   df = pd.read_csv(path)
   
   # output summary
-  summary = df.groupby(['model', 'prompt_type'])['correct_answer'].mean().reset_index(name='proportion_correct')
+  # summary = df.groupby(['model', 'prompt_type'])['correct_answer'].mean().reset_index(name='proportion_correct')
+  summary = df.groupby(['model', 'prompt_type'])['correct_answer'].agg(['mean', 'std']).reset_index()
+  # Rename the columns for clarity
+  summary.columns = ['model', 'prompt_type', 'proportion_correct', 'std_deviation']
+    
   print(summary)
   return summary
 
@@ -23,6 +27,14 @@ def analyse_triage():
 
   print(summary)
   return summary
+
+def check_question_variation(path): 
+  df = pd.read_csv(path)
+  summary = df.groupby(['question_id', 'model'])['correct_answer'].mean().reset_index(name='proportion_correct')
+
+  print(summary)
+  return summary
+
 
 
 
