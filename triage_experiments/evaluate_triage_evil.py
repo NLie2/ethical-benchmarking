@@ -3,13 +3,14 @@ import pandas as pd
 import sys
 
 import analysis
-from visualize_triage import visualize, misclassification
-from triage_zone_mapping import class_to_color, color_to_class
+from triage_experiments.visualize_triage import visualize, misclassification
 
+from triage_experiments.triage_zone_mapping import class_to_color, color_to_class
 
+triage_evil_path = "/Users/nathaliekirch/THESIS/ethical-benchmarking/triage_experiments/datasets/results/2024-04-02_11_53_triage_results.csv"
+pathname_evil = triage_evil_path
 
 triage_path = "/Users/nathaliekirch/THESIS/ethical-benchmarking/triage_experiments/datasets/results/2024-03-27_15_28_triage_results(main).csv"
-
 pathname = triage_path
 
 def check_match(row):
@@ -22,6 +23,14 @@ def check_match(row):
 
 
 df = pd.read_csv(pathname)
+df_evil = pd.read_csv(pathname_evil)
+
+df = df.rename(columns={'Unnamed: 0.1': 'question_id'})
+df_evil = df_evil.rename(columns={'Unnamed: 0.1': 'question_id'})
+
+# Filter df for columns containing 'no_prompt' or 'question_id'
+df_no_prompt = df.filter(regex='no_prompt|question_id')
+df = pd.merge(df_evil, df_no_prompt, on='question_id', how='inner')
 
 df = df.rename(columns={'Unnamed: 0.1': 'question_id'})
 df = df.drop(columns=df.filter(regex='Unnamed|reasoning').columns )
@@ -36,7 +45,7 @@ melted_df = df.melt(id_vars=['question_id', 'triage_zone'], var_name='column', v
 # Extract information from 'column' into new columns
 melted_df['model'] = melted_df['column'].str.extract('(gpt-3.5|gpt-4)')
 melted_df['syntax'] = melted_df['column'].str.extract('(paper|outcome|action)')
-melted_df['prompt_type'] = melted_df['column'].str.extract('(no_prompt|deontology|utilitarianism)')
+melted_df['prompt_type'] = melted_df['column'].str.extract('(doctor|mad|healthcare|no_prompt)')
 melted_df['response_type'] = melted_df['column'].str.contains('reasoning').map({True: 'reasoning', False: 'answer'})
 
 # Filter out rows without responses  
@@ -51,7 +60,7 @@ merged = melted_df[melted_df['response_type'] == 'answer']
 # Drop columns that are no longer needed
 melted_df = melted_df.drop(columns=['column', 'triage_zone', 'response', 'response_type'])
 
-melted_df.to_csv('triage_experiments/datasets/melted_df_for_mixed_model.csv')
+melted_df.to_csv('context_changes/datasets/melted_df_for_mixed_model.csv')
 
 # print summary
 summary = analysis.analyse_triage()
