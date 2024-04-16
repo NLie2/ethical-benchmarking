@@ -7,11 +7,11 @@ from triage_experiments.visualize_triage import visualize, visualize_alt, miscla
 
 from triage_experiments.triage_zone_mapping import class_to_color, color_to_class
 
-triage_evil_path = "/Users/nathaliekirch/THESIS/ethical-benchmarking/triage_experiments/datasets/results/2024-04-02_11_53_triage_results.csv"
-pathname_evil = triage_evil_path
+triage_evil_path_mistral = "triage_experiments/datasets/results/triage_mistral_evil_cleaned.csv"
+pathname_evil = triage_evil_path_mistral
 
-triage_path = "/Users/nathaliekirch/THESIS/ethical-benchmarking/triage_experiments/datasets/results/2024-03-27_15_28_triage_results(main).csv"
-pathname = triage_path
+# triage_path_gpt = "/Users/nathaliekirch/THESIS/ethical-benchmarking/triage_experiments/datasets/results/2024-04-02_11_53_triage_results.csv"
+# pathname = triage_path_gpt
 
 def check_match(row):
     # Get the model answer for the current gold answer from the mapping
@@ -22,29 +22,29 @@ def check_match(row):
 
 
 
-df = pd.read_csv(pathname)
+# df = pd.read_csv(pathname)
 df_evil = pd.read_csv(pathname_evil)
 
-df = df.rename(columns={'Unnamed: 0.1': 'question_id'})
+# df = df.rename(columns={'Unnamed: 0.1': 'question_id'})
 df_evil = df_evil.rename(columns={'Unnamed: 0.1': 'question_id'})
 
-# Filter df for columns containing 'no_prompt' or 'question_id'
-df_no_prompt = df.filter(regex='no_prompt|question_id')
-df = pd.merge(df_evil, df_no_prompt, on='question_id', how='inner')
+# # Filter df for columns containing 'no_prompt' or 'question_id'
+# df_no_prompt = df.filter(regex='no_prompt|question_id')
+# df = pd.merge(df_evil, df_no_prompt, on='question_id', how='inner')
 
-df = df.rename(columns={'Unnamed: 0.1': 'question_id'})
-df = df.drop(columns=df.filter(regex='Unnamed|reasoning').columns )
-df = df.drop(columns=['question', 'action', 'class'])
+# df = df.rename(columns={'Unnamed: 0.1': 'question_id'})
+# df = df.drop(columns=df.filter(regex='Unnamed|reasoning').columns )
+# df = df.drop(columns=['question', 'action', 'class'])
 
 
 # Dataframe like this has many results per row. 
 # I need it to be one result per row, where model and prompt are listed as "conditions"
 # Melt the DataFrame
-melted_df = df.melt(id_vars=['question_id', 'triage_zone'], var_name='column', value_name='response')
+melted_df = df_evil.melt(id_vars=['question_id', 'triage_zone'], var_name='column', value_name='response')
 
 # Extract information from 'column' into new columns
-melted_df['model'] = melted_df['column'].str.extract('(gpt-3.5|gpt-4)')
-melted_df['syntax'] = melted_df['column'].str.extract('(paper|outcome|action)')
+melted_df['model'] = melted_df['column'].str.extract('(gpt-3.5|gpt-4|mistral)')
+# melted_df['syntax'] = melted_df['column'].str.extract('(paper|outcome|action)')
 melted_df['prompt_type'] = melted_df['column'].str.extract('(doctor|mad|healthcare|no_prompt)')
 melted_df['response_type'] = melted_df['column'].str.contains('reasoning').map({True: 'reasoning', False: 'answer'})
 
@@ -60,10 +60,10 @@ merged = melted_df[melted_df['response_type'] == 'answer']
 # Drop columns that are no longer needed
 melted_df = melted_df.drop(columns=['column', 'triage_zone', 'response', 'response_type'])
 
-melted_df.to_csv('context_changes/datasets/melted_df_for_mixed_model_evil.csv')
+melted_df.to_csv('context_changes/datasets/melted_df_for_mixed_model_mistral.csv')
 
 # print summary
-summary = analysis.analyse_triage('context_changes/datasets/melted_df_for_mixed_model_evil.csv')
+summary = analysis.analyse_triage('context_changes/datasets/melted_df_for_mixed_model_mistral.csv')
 # question_variation = analysis.check_question_variation("triage_experiments/datasets/melted_df_for_mixed_model.csv")
 
 

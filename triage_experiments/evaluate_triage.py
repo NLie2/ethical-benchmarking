@@ -3,12 +3,13 @@ import pandas as pd
 import sys
 
 import analysis
-from visualize_triage import visualize, misclassification
+from visualize_triage import visualize, visualize_alt, misclassification
 from triage_zone_mapping import class_to_color, color_to_class
 
 
 
 triage_path = "/Users/nathaliekirch/THESIS/ethical-benchmarking/triage_experiments/datasets/results/2024-03-27_15_28_triage_results(main).csv"
+# mistral_triage_path = "triage_experiments/datasets/results/triage_mistral_cleaned.csv"
 
 pathname = triage_path
 
@@ -34,10 +35,11 @@ df = df.drop(columns=['question', 'action', 'class'])
 melted_df = df.melt(id_vars=['question_id', 'triage_zone'], var_name='column', value_name='response')
 
 # Extract information from 'column' into new columns
-melted_df['model'] = melted_df['column'].str.extract('(gpt-3.5|gpt-4)')
+melted_df['model'] = melted_df['column'].str.extract('(gpt-3.5|gpt-4|Mistral)')
 melted_df['syntax'] = melted_df['column'].str.extract('(paper|outcome|action)')
 melted_df['prompt_type'] = melted_df['column'].str.extract('(no_prompt|deontology|utilitarianism)')
-melted_df['response_type'] = melted_df['column'].str.contains('reasoning').map({True: 'reasoning', False: 'answer'})
+melted_df['response_type'] = melted_df['column'].str.extract('(reasoning|answer|raw)')
+# melted_df['response_type'] = melted_df['column'].str.contains('reasoning').map({True: 'reasoning', False: 'answer'})
 
 # Filter out rows without responses  
 melted_df.dropna(subset=['response'])
@@ -46,7 +48,7 @@ melted_df.dropna(subset=['response'])
 melted_df['correct_answer'] = melted_df.apply(check_match, axis=1)
 
 # filter melted_df for rows that contain "answer" in response_tye
-merged = melted_df[melted_df['response_type'] == 'answer']
+melted_df = melted_df[melted_df['response_type'] == 'answer']
 
 # Drop columns that are no longer needed
 melted_df = melted_df.drop(columns=['column', 'triage_zone', 'response', 'response_type'])
@@ -54,20 +56,19 @@ melted_df = melted_df.drop(columns=['column', 'triage_zone', 'response', 'respon
 melted_df.to_csv('triage_experiments/datasets/melted_df_for_mixed_model.csv')
 
 # print summary
-summary = analysis.analyse_triage()
+# summary = analysis.analyse_triage('triage_experiments/datasets/melted_df_for_mixed_model_mistral.csv')
+summary = analysis.analyse_triage("triage_experiments/datasets/melted_df_for_mixed_model.csv")
+
 # question_variation = analysis.check_question_variation("triage_experiments/datasets/melted_df_for_mixed_model.csv")
 
 
 
 visualize(summary)
 
+# add misclassifications ? 
 
+print(df.columns)
+# columns = [column for column in df.columns if column not in ["question_id", "triage_zone", 'mistralai/Mistral-7B-Instruct-v0.1_from_paper_deontology_raw', 'mistralai/Mistral-7B-Instruct-v0.1_from_paper_utilitarianism_raw', 'mistralai/Mistral-7B-Instruct-v0.1_from_paper_no_prompt_raw']]
 
-
-# print(gpt_35.head(5)["qustion_id"], gpt_4.head(5)["question_id"], paper.head(5)["question_id"], action.head(5)["question_id"], outcome.head(5)["question_id"], no_prompt.head(5)["question_id"], deontology.head(5)["question_id"], utilitarianism.head(5)["question_id"])
-
-# merge all dataframes
-# add all columns except question_id and triage_zone
-columns = [column for column in df.columns if column not in ["question_id", "triage_zone"]]
-misclassification(df, columns)
+# misclassification(df, columns)
 

@@ -8,22 +8,28 @@ def analyse_health_law(path):
   df = pd.read_csv(path)
   
   # output summary
-  # summary = df.groupby(['model', 'prompt_type'])['correct_answer'].mean().reset_index(name='proportion_correct')
-  summary = df.groupby(['model', 'prompt_type'])['correct_answer'].agg(['mean', 'std']).reset_index()
+  summary = df.groupby(['model', 'prompt_type'])['correct_answer'].mean().reset_index(name='proportion_correct')
+  # summary = df.groupby(['model', 'prompt_type'])['correct_answer'].agg(['mean', 'std']).reset_index()
   # Rename the columns for clarity
-  summary.columns = ['model', 'prompt_type', 'proportion_correct', 'std_deviation']
+  summary.columns = ['model', 'prompt_type', 'proportion_correct']
     
   print(summary)
   return summary
 
 
 # Analyse correctness of triage dataset
-def analyse_triage():
-  df = pd.read_csv('triage_experiments/datasets/melted_df_for_mixed_model.csv')
+def analyse_triage(path):
+  df = pd.read_csv(path)
 
   # print summary
   # summary = df.groupby(['model', 'prompt_type', 'syntax'])['correct_answer'].mean().reset_index(name='proportion_correct')
   summary = df.groupby(['model', 'prompt_type'])['correct_answer'].mean().reset_index(name='proportion_correct')
+
+  # summary = df.groupby(['model', 'prompt_type'])['correct_answer'].agg(['mean', 'std']).reset_index()
+  # summary.columns = ['model', 'prompt_type', 'syntax','proportion_correct']
+  summary.columns = ['model', 'prompt_type','proportion_correct']
+
+
 
   print(summary)
   return summary

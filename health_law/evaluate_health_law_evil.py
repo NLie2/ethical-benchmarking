@@ -53,4 +53,4 @@ summary = analysis.analyse_health_law('context_changes/datasets/health_law/melte
 
 variation = analysis.check_question_variation('context_changes/datasets/health_law/melted_df_for_mixed_model.csv')
 
-visualize_health_law.visualize_alt(summary)
+visualize_health_law.visualize(summary)
