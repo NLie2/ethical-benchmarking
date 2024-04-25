@@ -31,6 +31,7 @@ df_evil = df_evil.rename(columns={'Unnamed: 0.1': 'question_id'})
 # Filter df for columns containing 'no_prompt' or 'question_id'
 df_no_prompt = df.filter(regex='no_prompt|question_id')
 df = pd.merge(df_evil, df_no_prompt, on='question_id', how='inner')
+df.to_csv('context_changes/datasets/gpt_evil_and_no_prompt.csv')
 
 df = df.rename(columns={'Unnamed: 0.1': 'question_id'})
 df = df.drop(columns=df.filter(regex='Unnamed|reasoning').columns )
