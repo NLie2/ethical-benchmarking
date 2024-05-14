@@ -7,11 +7,14 @@ from visualize_triage import visualize, visualize_alt, misclassification
 from triage_zone_mapping import class_to_color, color_to_class
 
 
-
-triage_path = "/Users/nathaliekirch/THESIS/ethical-benchmarking/triage_experiments/datasets/results/2024-03-27_15_28_triage_results(main).csv"
+# gpt_triage_path = "/Users/nathaliekirch/THESIS/ethical-benchmarking/triage_experiments/datasets/results/2024-03-27_15_28_triage_results(main).csv"
 # mistral_triage_path = "triage_experiments/datasets/results/triage_mistral_cleaned.csv"
+# mixtral_triage_path = "triage_experiments/datasets/results/triage_results_mixtral_from_paper.csv"
+haiku_triage_path = "triage_experiments/datasets/results/2024-04-29_19_49_triage_results_claude_haiku.csv"
+opus_triage_path = "triage_experiments/datasets/results/triage_results_claude_opus_from_paper.csv"
 
-pathname = triage_path
+
+pathname = opus_triage_path
 
 def check_match(row):
     # Get the model answer for the current gold answer from the mapping
@@ -26,7 +29,7 @@ df = pd.read_csv(pathname)
 
 df = df.rename(columns={'Unnamed: 0.1': 'question_id'})
 df = df.drop(columns=df.filter(regex='Unnamed|reasoning').columns )
-df = df.drop(columns=['question', 'action', 'class'])
+#df = df.drop(columns=['question', 'action', 'class'])
 
 
 # Dataframe like this has many results per row. 
@@ -35,7 +38,7 @@ df = df.drop(columns=['question', 'action', 'class'])
 melted_df = df.melt(id_vars=['question_id', 'triage_zone'], var_name='column', value_name='response')
 
 # Extract information from 'column' into new columns
-melted_df['model'] = melted_df['column'].str.extract('(gpt-3.5|gpt-4|Mistral)')
+melted_df['model'] = melted_df['column'].str.extract('(gpt-3.5|gpt-4|Mistral|mixtral|haiku|opus)')
 melted_df['syntax'] = melted_df['column'].str.extract('(paper|outcome|action)')
 melted_df['prompt_type'] = melted_df['column'].str.extract('(no_prompt|deontology|utilitarianism)')
 melted_df['response_type'] = melted_df['column'].str.extract('(reasoning|answer|raw)')
@@ -50,14 +53,16 @@ melted_df['correct_answer'] = melted_df.apply(check_match, axis=1)
 # filter melted_df for rows that contain "answer" in response_tye
 melted_df = melted_df[melted_df['response_type'] == 'answer']
 
+
 # Drop columns that are no longer needed
 melted_df = melted_df.drop(columns=['column', 'triage_zone', 'response', 'response_type'])
 
-melted_df.to_csv('triage_experiments/datasets/melted_df_for_mixed_model.csv')
+melted_df.to_csv('triage_experiments/datasets/melted_df_for_mixed_model_claude_opus.csv')
 
 # print summary
 # summary = analysis.analyse_triage('triage_experiments/datasets/melted_df_for_mixed_model_mistral.csv')
-summary = analysis.analyse_triage("triage_experiments/datasets/melted_df_for_mixed_model.csv")
+# summary = analysis.analyse_triage("triage_experiments/datasets/melted_df_for_mixed_model_mixtral.csv")
+summary = analysis.analyse_triage("triage_experiments/datasets/melted_df_for_mixed_model_claude_opus.csv")
 
 # question_variation = analysis.check_question_variation("triage_experiments/datasets/melted_df_for_mixed_model.csv")
 
@@ -65,10 +70,4 @@ summary = analysis.analyse_triage("triage_experiments/datasets/melted_df_for_mix
 
 visualize(summary)
 
-# add misclassifications ? 
-
-print(df.columns)
-# columns = [column for column in df.columns if column not in ["question_id", "triage_zone", 'mistralai/Mistral-7B-Instruct-v0.1_from_paper_deontology_raw', 'mistralai/Mistral-7B-Instruct-v0.1_from_paper_utilitarianism_raw', 'mistralai/Mistral-7B-Instruct-v0.1_from_paper_no_prompt_raw']]
-
-# misclassification(df, columns)
 

@@ -27,6 +27,7 @@ def analyse_triage(path):
 
   # summary = df.groupby(['model', 'prompt_type'])['correct_answer'].agg(['mean', 'std']).reset_index()
   # summary.columns = ['model', 'prompt_type', 'syntax','proportion_correct']
+  summary = summary.sort_values(by='proportion_correct', ascending=False)
   summary.columns = ['model', 'prompt_type','proportion_correct']
 
 
