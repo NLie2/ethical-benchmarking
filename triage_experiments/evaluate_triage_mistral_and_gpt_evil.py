@@ -3,19 +3,16 @@ import pandas as pd
 import sys
 
 import analysis
-from triage_experiments.visualize_triage import visualize, visualize_alt, misclassification
+from triage_experiments.visualize_triage import visualize, misclassification
 
 from triage_experiments.triage_zone_mapping import class_to_color, color_to_class
 
-triage_evil_path_mistral = "triage_experiments/datasets/results/triage_mistral_evil_cleaned.csv"
+triage_evil_path_mistral = "context_changes/datasets/triage/triage_mistral_evil_cleaned.csv"
 #pathname_evil = triage_evil_path_mistral
-
-triage_evil_path_gpt = "context_changes/datasets/gpt_evil_and_no_prompt.csv"
+triage_evil_path_gpt = "context_changes/datasets/triage/gpt_evil_and_no_prompt.csv"
 # pathname = triage_path_gpt
-
-triage_evil_path_mixtral = "context_changes/datasets/mixtral_evil_and_no_prompt.csv"
-
-triage_evil_path_claude = "context_changes/datasets/claude_evil_and_no_prompt.csv"
+triage_evil_path_mixtral = "context_changes/datasets/triage/mixtral_evil_and_no_prompt.csv"
+triage_evil_path_claude = "context_changes/datasets/triage/claude_haiku_evil_and_no_prompt.csv"
 
 def check_match(row):
     # Get the model answer for the current gold answer from the mapping
