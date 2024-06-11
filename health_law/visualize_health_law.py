@@ -16,7 +16,7 @@ def visualize(summary):
 
   plt.figure(figsize=(8, 6))
   # sns.heatmap(pivot_df, annot=True, cmap='coolwarm', fmt=".2f") 
-  sns.heatmap(pivot_df, annot=True, cmap='coolwarm', fmt=".2f", vmin=0.5)
+  sns.heatmap(pivot_df, annot=True, cmap='Greens', fmt=".2f", vmin=0.5)
   
   plt.title('Proportion of Correct Answers by Model and ethics prompt Type')
   # plt.title('Proportion of Correct Answers by Model, Prompt Type, and Syntax')
